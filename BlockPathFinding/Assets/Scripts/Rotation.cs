@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 
 public class Rotation : MonoBehaviour
@@ -9,16 +12,21 @@ public class Rotation : MonoBehaviour
     public GameObject ratatui;
     public Vector3 ratatuiPos;
 
-    public float i;
+    public float i; //Obrót playera
+    public float j; //Ruch Counter
     
     public float xObrotnik;
     public float yObrotnik;
     public float zObrotnik;
 
     public LayerMask lejer = 1;
-    GameObject obj;
+    
+    private bool isGround = false;
 
-    private bool isGround;
+    private bool goTo1;
+    private bool goTo2;
+    private bool goTo3;
+    private bool goTo4;
 
     void Start()
     {
@@ -62,7 +70,8 @@ public class Rotation : MonoBehaviour
 
 
     public void GoTo1()
-    {
+    {//Tutaj siê pierdoli z cofaniem zmian
+        goTo1 = true;
         zObrotnik = ratatuiPos.z;
         zObrotnik += 2;
 
@@ -70,12 +79,16 @@ public class Rotation : MonoBehaviour
         yObrotnik = 0;
 
         Check();
-
-        RatatuiPosReset();
+        if (!isGround)
+        {
+            zObrotnik = ratatuiPos.z;
+        }
+        
     }
 
     public void GoTo2()
     {
+        goTo2 = true;
         xObrotnik = ratatuiPos.x;
         xObrotnik += 2;
 
@@ -83,23 +96,36 @@ public class Rotation : MonoBehaviour
         yObrotnik = 0;
 
         Check();
+        if (!isGround)
+        {
+            xObrotnik = ratatuiPos.x;
+            
+        }
 
-        RatatuiPosReset();
     }
     public void GoTo3()
     {
+        goTo3 = true;
         zObrotnik = ratatuiPos.z;
         zObrotnik -= 2;
 
         yObrotnik = ratatuiPos.y;
         yObrotnik = 0;
 
-        Check();
 
-        RatatuiPosReset();
+
+        Check();
+        if (!isGround)
+        {
+            zObrotnik = ratatuiPos.z;
+            
+        }
+
     }
+
     public void GoTo4()
     {
+        goTo4 = true;
         xObrotnik = ratatuiPos.x;
         xObrotnik -= 2;
 
@@ -107,25 +133,38 @@ public class Rotation : MonoBehaviour
         yObrotnik = 0;
 
         Check();
+        if (!isGround)
+        {
+            xObrotnik = ratatuiPos.x;
+            
+        }
 
-        RatatuiPosReset();
     }
+    
     public void Check()
     {
+        //void Start zapisaæ kordy pierwszego klocka
+        //Zapisaæ kordy po ruchu i przed ruchem sprawdziæ, jak do dupy to instant zwraca isGround false i leci do nastêpnego GoTox()
+        GameObject obj = null;
         Collider[] colliders = Physics.OverlapSphere(new Vector3(xObrotnik, yObrotnik, zObrotnik), 0, lejer);
         foreach (Collider collider in colliders)
         {
-            obj = collider.gameObject;
+             obj = collider.gameObject;
         }
         Debug.Log("Wykryto ojbekt: " + obj);
         //Debug.Log("Wykryto ojbekt at: " + obj.transform.position);
 
         if (obj != null) //Sprawdzanie czy obiekt wgl jest tam
         {
+            
             if (colliders[0].gameObject.tag == "Ground") //Sprawdzanie czy mo¿na iœæ
             {
                 Debug.Log("Very yes at " + xObrotnik + yObrotnik + zObrotnik);
                 isGround = true;
+
+                //if (j == 0) FirstMoving();
+                FirstMoving();
+                //if(goTo3) MoveForward();
 
             }
             else if (colliders[0].gameObject.tag == "NotGround")
@@ -140,16 +179,40 @@ public class Rotation : MonoBehaviour
                 isGround = false;
 
             }
-            obj = null;
         }
         else
         {
             Debug.Log("Tutaj nie ma nic");
         }
     }
+    public void FirstMoving()
+    {
+        Vector3 target = new Vector3(xObrotnik, yObrotnik + 1, zObrotnik);
+        StartCoroutine(MoveTowardsPos(target));
+    }
+    public void ActualMoving()
+    {
+        if (!goTo3) 
+        {
+            Vector3 target = new Vector3(xObrotnik, yObrotnik + 1, zObrotnik);
+            StartCoroutine(MoveTowardsPos(target));
+        }
+    }
+
+    IEnumerator MoveTowardsPos(Vector3 target)
+    {
+        while(transform.position != target)
+        {
+            ratatui.transform.position = Vector3.MoveTowards(transform.position, target, 5 * Time.deltaTime);
+            yield return null;
+        }
+        RatatuiPosReset();
+        
+    }
 
     public void RatatuiPosReset()
     {
+        ratatuiPos = ratatui.transform.position;
         xObrotnik = ratatuiPos.x;
         yObrotnik = ratatuiPos.y;
         zObrotnik = ratatuiPos.z;
