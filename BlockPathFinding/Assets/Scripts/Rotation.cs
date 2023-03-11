@@ -19,19 +19,25 @@ public class Rotation : MonoBehaviour
     public float yObrotnik;
     public float zObrotnik;
 
+    public float xCheck;
+    public float zCheck;
+
     public LayerMask lejer = 1;
     
     private bool isGround = false;
 
-    private bool goTo1;
-    private bool goTo2;
-    private bool goTo3;
-    private bool goTo4;
+    private bool goTo1 = false;
+    private bool goTo2 = false;
+    private bool goTo3 = false;
+    private bool goTo4 = false;
 
     void Start()
     {
         ratatui.transform.position = new Vector3(0, 1, 0);
         ratatuiPos = ratatui.transform.position;
+
+        xCheck = ratatuiPos.x;
+        zCheck = ratatuiPos.z;
     }
 
 
@@ -143,60 +149,61 @@ public class Rotation : MonoBehaviour
     
     public void Check()
     {
-        //void Start zapisaæ kordy pierwszego klocka
-        //Zapisaæ kordy po ruchu i przed ruchem sprawdziæ, jak do dupy to instant zwraca isGround false i leci do nastêpnego GoTox()
-        GameObject obj = null;
-        Collider[] colliders = Physics.OverlapSphere(new Vector3(xObrotnik, yObrotnik, zObrotnik), 0, lejer);
-        foreach (Collider collider in colliders)
-        {
-             obj = collider.gameObject;
-        }
-        Debug.Log("Wykryto ojbekt: " + obj);
-        //Debug.Log("Wykryto ojbekt at: " + obj.transform.position);
-
-        if (obj != null) //Sprawdzanie czy obiekt wgl jest tam
-        {
-            
-            if (colliders[0].gameObject.tag == "Ground") //Sprawdzanie czy mo¿na iœæ
+        
+            GameObject obj = null;
+            Collider[] colliders = Physics.OverlapSphere(new Vector3(xObrotnik, yObrotnik, zObrotnik), 0, lejer);
+            foreach (Collider collider in colliders)
             {
-                Debug.Log("Very yes at " + xObrotnik + yObrotnik + zObrotnik);
-                isGround = true;
-
-                //if (j == 0) FirstMoving();
-                FirstMoving();
-                //if(goTo3) MoveForward();
-
+                obj = collider.gameObject;
             }
-            else if (colliders[0].gameObject.tag == "NotGround")
-            {
-                Debug.Log("Very no " + xObrotnik + yObrotnik + zObrotnik);
-                isGround = false;
+            Debug.Log("Wykryto ojbekt: " + obj);
+            //Debug.Log("Wykryto ojbekt at: " + obj.transform.position);
 
+            if (obj != null) //Sprawdzanie czy obiekt wgl jest tam
+            {
+                if (colliders[0].gameObject.tag == "Ground") //Sprawdzanie czy mo¿na iœæ
+                {
+
+                    //Tutaj storowaæ pozycje i póŸniej w Moving j¹ sprawdzaæ i ew pomin¹æ poruszenie klocka
+                    Debug.Log("Very yes at " + xObrotnik + yObrotnik + zObrotnik);
+                    isGround = true;
+
+                if (xCheck == xObrotnik && zCheck == zObrotnik)
+                {
+                    Debug.Log("Tutaj ju¿ by³em " + xObrotnik + yObrotnik + zObrotnik);
+                    isGround = false;
+                }
+                else
+                {
+                    xCheck = ratatuiPos.x;
+                    zCheck = ratatuiPos.z;
+                    ActualMoving();
+                    
+                }
+            }
+                else if (colliders[0].gameObject.tag == "NotGround")
+                {
+                    Debug.Log("Very no " + xObrotnik + yObrotnik + zObrotnik);
+                    isGround = false;
+
+                }
+                else
+                {
+                    Debug.Log("There is literally nothing " + xObrotnik + yObrotnik + zObrotnik);
+                    isGround = false;
+
+                }
             }
             else
             {
-                Debug.Log("There is literally nothing " + xObrotnik + yObrotnik + zObrotnik);
-                isGround = false;
-
+                Debug.Log("Tutaj nie ma nic");
             }
-        }
-        else
-        {
-            Debug.Log("Tutaj nie ma nic");
-        }
-    }
-    public void FirstMoving()
-    {
-        Vector3 target = new Vector3(xObrotnik, yObrotnik + 1, zObrotnik);
-        StartCoroutine(MoveTowardsPos(target));
+
     }
     public void ActualMoving()
     {
-        if (!goTo3) 
-        {
-            Vector3 target = new Vector3(xObrotnik, yObrotnik + 1, zObrotnik);
-            StartCoroutine(MoveTowardsPos(target));
-        }
+        Vector3 target = new Vector3(xObrotnik, yObrotnik + 1, zObrotnik);
+        StartCoroutine(MoveTowardsPos(target));
     }
 
     IEnumerator MoveTowardsPos(Vector3 target)
