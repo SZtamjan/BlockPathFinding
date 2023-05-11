@@ -1309,6 +1309,7 @@ GameObject:
   - component: {fileID: 1270960858}
   - component: {fileID: 1270960857}
   - component: {fileID: 1270960861}
+  - component: {fileID: 1270960862}
   m_Layer: 0
   m_Name: Ratatui
   m_TagString: Player
@@ -1406,15 +1407,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f509e17f2303a1c48b6dc3d679c3c080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mover: {fileID: 1118217000}
   ratatui: {fileID: 1270960856}
-  ratatuiPos: {x: 0, y: 0, z: 0}
-  i: 0
-  xObrotnik: 0
-  yObrotnik: 0
-  zObrotnik: 0
-  lejer:
-    serializedVersion: 2
-    m_Bits: 1
+--- !u!114 &1270960862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270960856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2e71e6c45fba1449a35809cfa103f6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1313007862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1555,7 +1561,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ff63160db906f14e9ecda51c40300c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 1620521648}
 --- !u!4 &1476814498
 Transform:
   m_ObjectHideFlags: 0
