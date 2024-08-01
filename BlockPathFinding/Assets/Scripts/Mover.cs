@@ -112,11 +112,13 @@ public class Mover : MonoBehaviour
     
     private void Check()
     {
-        
+        Debug.Log("Lejer: " + lejer);
             GameObject obj = null;
-            Collider[] colliders = Physics.OverlapSphere(obrotnik, 0, lejer);
+            Collider[] colliders = Physics.OverlapSphere(obrotnik, 0);
+            Debug.Log("Enemies: " + colliders[0]);
             foreach (Collider collider in colliders) //Ten foreach to zabezpieczenie jakby nie było bloku w miejscu gdzie aktualnie jest sprawdzany
             {
+                Debug.Log("Kolider: " + collider);
                 obj = collider.gameObject;
             }
             
